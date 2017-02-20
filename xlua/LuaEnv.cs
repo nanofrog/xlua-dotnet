@@ -32,6 +32,8 @@ namespace XLua
 
         internal int errorFuncRef = -1;
 
+        private LuaCSFunction printDelegate;
+
 #if THREAD_SAFT || HOTFIX_ENABLE
         internal object luaEnvLock = new object();
 #endif
@@ -58,12 +60,14 @@ namespace XLua
 
                 LuaAPI.lua_atpanic(L, StaticLuaCallbacks.Panic);
 
-                LuaAPI.lua_pushstdcallcfunction(L, StaticLuaCallbacks.Print);
+                printDelegate = StaticLuaCallbacks.Print;
+                LuaAPI.lua_pushstdcallcfunction(L, printDelegate);
+                
                 if (0 != LuaAPI.xlua_setglobal(L, "print"))
                 {
                     throw new Exception("call xlua_setglobal fail!");
                 }
-
+            
                 //template engine lib register
                 TemplateEngine.LuaTemplate.OpenLib(L);
 
@@ -112,7 +116,7 @@ namespace XLua
                 LuaAPI.lua_pushthread(L);
                 LuaAPI.lua_rawset(L, LuaIndexes.LUA_REGISTRYINDEX);
 
-                translator.Alias(typeof(Type), "System.MonoType");
+                //translator.Alias(typeof(Type), "System.MonoType");
 
                 if (0 != LuaAPI.xlua_getglobal(L, "_G"))
                 {
