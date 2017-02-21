@@ -17,6 +17,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 #endif
 
 using System;
+using System.Reflection;
 
 namespace XLua
 {
@@ -143,7 +144,12 @@ namespace XLua
 
         public static bool IsStruct(Type type)
         {
+#if UNITY_WSA && !UNITY_EDITOR
+            var t = type.GetTypeInfo();
+            return t.IsValueType && !t.IsEnum && !t.IsPrimitive;
+#else
             return type.IsValueType && !type.IsEnum && !type.IsPrimitive;
+#endif
         }
 
     }

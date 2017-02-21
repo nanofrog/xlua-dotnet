@@ -303,9 +303,15 @@ namespace XLua
             if (!constructorCache.ContainsKey(type))
             {
                 var constructors = type.GetConstructors();
+#if UNITY_WSA && !UNITY_EDITOR
+                if (type.GetTypeInfo().IsAbstract || constructors == null || constructors.Length == 0)
+                {
+                    if (type.GetTypeInfo().IsValueType)
+#else
                 if (type.IsAbstract || constructors == null || constructors.Length == 0)
                 {
                     if (type.IsValueType)
+#endif
                     {
                         constructorCache[type] = (L) =>
                         {

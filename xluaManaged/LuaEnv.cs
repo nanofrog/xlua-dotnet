@@ -11,6 +11,7 @@ using LuaAPI = UniLua.Lua;
 using RealStatePtr = UniLua.ILuaState;
 using LuaCSFunction = UniLua.CSharpFunctionDelegate;
 #else
+using System.Reflection;
 using LuaAPI = XLua.LuaDLL.Lua;
 using RealStatePtr = System.IntPtr;
 using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
@@ -167,8 +168,12 @@ namespace XLua
             lock (luaEnvLock)
             {
 #endif
-                if (typeof(T) != typeof(LuaFunction) && !typeof(T).IsSubclassOf(typeof(Delegate)))
-                {
+#if UNITY_WSA && !UNITY_EDITOR
+            if (typeof(T) != typeof(LuaFunction) && !typeof(T).GetTypeInfo().IsSubclassOf(typeof(Delegate)))
+#else
+            if (typeof(T) != typeof(LuaFunction) && !typeof(T).IsSubclassOf(typeof(Delegate)))
+#endif
+            {
                     throw new InvalidOperationException(typeof(T).Name + " is not a delegate type nor LuaFunction");
                 }
 

@@ -552,7 +552,11 @@ namespace XLua
                 {
                     int obj_index;
                     //lua gc是先把weak table移除后再调用__gc，这期间同一个对象可能再次push到lua，关联到新的index
+#if UNITY_WSA && !UNITY_EDITOR
+                    bool is_enum = o.GetType().GetTypeInfo().IsEnum;
+#else
                     bool is_enum = o.GetType().IsEnum;
+#endif
                     if ((is_enum ? enumMap.TryGetValue(o, out obj_index) : reverseMap.TryGetValue(o, out obj_index))
                         && obj_index == obj_index_to_collect)
                     {
@@ -766,7 +770,11 @@ namespace XLua
                 {
                     typeIdMap.Remove(type);
                     LuaAPI.lua_unref(L, type_id);
+#if UNITY_WSA && !UNITY_EDITOR
+                    if (type.GetTypeInfo().IsValueType && typeMap.ContainsKey(type_id))
+#else
                     if (type.IsValueType && typeMap.ContainsKey(type_id))
+#endif
                     {
                         typeMap.Remove(type_id);
                     }
@@ -776,8 +784,11 @@ namespace XLua
                 LuaAPI.lua_pushnumber(L, type_id);
                 LuaAPI.xlua_rawseti(L, -2, 1);
                 LuaAPI.lua_pop(L, 1);
-
+#if UNITY_WSA && !UNITY_EDITOR
+                if (type.GetTypeInfo().IsValueType)
+#else
                 if (type.IsValueType)
+#endif
                 {
                     typeMap.Add(type_id, type);
                 }
@@ -840,7 +851,11 @@ namespace XLua
             }
 
             Type type = o.GetType();
+#if UNITY_WSA && !UNITY_EDITOR
+            if (type.GetTypeInfo().IsPrimitive)
+#else
             if (type.IsPrimitive)
+#endif
             {
                 pushPrimitive(L, o);
             }
@@ -953,8 +968,13 @@ namespace XLua
 
             int index = -1;
             Type type = o.GetType();
+#if UNITY_WSA && !UNITY_EDITOR
+            bool is_enum = type.GetTypeInfo().IsEnum;
+            bool is_valuetype = type.GetTypeInfo().IsValueType;
+#else
             bool is_enum = type.IsEnum;
             bool is_valuetype = type.IsValueType;
+#endif
             bool needcache = !is_valuetype || is_enum;
             if (needcache && (is_enum ? enumMap.TryGetValue(o, out index) : reverseMap.TryGetValue(o, out index)))
             {

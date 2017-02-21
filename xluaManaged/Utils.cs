@@ -91,7 +91,11 @@ namespace XLua
                 {
                     ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
                     object val = translator.GetObject(L, 1, field.FieldType);
+#if UNITY_WSA && !UNITY_EDITOR
+                    if (field.FieldType.GetTypeInfo().IsValueType && val == null)
+#else
                     if (field.FieldType.IsValueType && val == null)
+#endif
                     {
                         return LuaAPI.luaL_error(L, type.Name + "." + field.Name + " Expected type " + field.FieldType);
                     }
@@ -112,7 +116,11 @@ namespace XLua
                     }
 
                     object val = translator.GetObject(L, 2, field.FieldType);
+#if UNITY_WSA && !UNITY_EDITOR
+                    if (field.FieldType.GetTypeInfo().IsValueType && val == null)
+#else
                     if (field.FieldType.IsValueType && val == null)
+#endif
                     {
                         return LuaAPI.luaL_error(L, type.Name + "." + field.Name + " Expected type " + field.FieldType);
                     }
@@ -173,7 +181,11 @@ namespace XLua
                 {
                     ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
                     object val = translator.GetObject(L, 1, prop.PropertyType);
+#if UNITY_WSA && !UNITY_EDITOR
+                    if (prop.PropertyType.GetTypeInfo().IsValueType && val == null)
+#else
                     if (prop.PropertyType.IsValueType && val == null)
+#endif
                     {
                         return LuaAPI.luaL_error(L, type.Name + "." + prop.Name + " Expected type " + prop.PropertyType);
                     }
@@ -201,7 +213,11 @@ namespace XLua
                     }
 
                     object val = translator.GetObject(L, 2, prop.PropertyType);
+#if UNITY_WSA && !UNITY_EDITOR
+                    if (prop.PropertyType.GetTypeInfo().IsValueType && val == null)
+#else
                     if (prop.PropertyType.IsValueType && val == null)
+#endif
                     {
                         return LuaAPI.luaL_error(L, type.Name + "." + prop.Name + " Expected type " + prop.PropertyType);
                     }
@@ -350,8 +366,13 @@ namespace XLua
                 while(enumerator.MoveNext())
                 {
                     Type type = enumerator.Current;
+#if UNITY_WSA && !UNITY_EDITOR
+                    if (type.GetTypeInfo().IsDefined(typeof(ExtensionAttribute), false) && (
+                            type.GetTypeInfo().IsDefined(typeof(ReflectionUseAttribute), false)
+#else
                     if (type.IsDefined(typeof(ExtensionAttribute), false)  && (
                             type.IsDefined(typeof(ReflectionUseAttribute), false)
+#endif
 #if UNITY_EDITOR
                             || type.IsDefined(typeof(LuaCallCSharpAttribute), false)
 #endif
@@ -359,13 +380,21 @@ namespace XLua
                     {
                         type_def_extention_method.Add(type);
                     }
-                    else if(!type.IsInterface && typeof(ReflectionConfig).IsAssignableFrom(type))
+#if UNITY_WSA && !UNITY_EDITOR
+                    else if (!type.GetTypeInfo().IsInterface && typeof(ReflectionConfig).IsAssignableFrom(type))
+#else
+                    else if (!type.IsInterface && typeof(ReflectionConfig).IsAssignableFrom(type))
+#endif
                     {
                         var tmp = (Activator.CreateInstance(type) as ReflectionConfig).ReflectionUse;
                         if (tmp != null)
                         {
                             type_def_extention_method.AddRange(tmp
+#if UNITY_WSA && !UNITY_EDITOR
+                                .Where(t => t.GetTypeInfo().IsDefined(typeof(ExtensionAttribute), false)));
+#else
                                 .Where(t => t.IsDefined(typeof(ExtensionAttribute), false)));
+#endif
                         }
                     }
 #if UNITY_EDITOR
@@ -379,7 +408,11 @@ namespace XLua
                         }
                     }
 #endif
+#if UNITY_WSA && !UNITY_EDITOR
+                    if (!type.GetTypeInfo().IsAbstract || !type.GetTypeInfo().IsSealed) continue;
+#else
                     if (!type.IsAbstract || !type.IsSealed) continue;
+#endif
 
                     var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                     for (int i = 0; i < fields.Length; i++)
@@ -392,7 +425,11 @@ namespace XLua
                             ) && (typeof(IEnumerable<Type>)).IsAssignableFrom(field.FieldType))
                         {
                             type_def_extention_method.AddRange((field.GetValue(null) as IEnumerable<Type>)
+#if UNITY_WSA && !UNITY_EDITOR
+                                .Where(t => t.GetTypeInfo().IsDefined(typeof(ExtensionAttribute), false)));
+#else
                                 .Where(t => t.IsDefined(typeof(ExtensionAttribute), false)));
+#endif
                         }
                     }
 
@@ -407,7 +444,11 @@ namespace XLua
                             ) && (typeof(IEnumerable<Type>)).IsAssignableFrom(prop.PropertyType))
                         {
                             type_def_extention_method.AddRange((prop.GetValue(null, null) as IEnumerable<Type>)
+#if UNITY_WSA && !UNITY_EDITOR
+                                .Where(t => t.GetTypeInfo().IsDefined(typeof(ExtensionAttribute), false)));
+#else
                                 .Where(t => t.IsDefined(typeof(ExtensionAttribute), false)));
+#endif
                         }
                     }
                 }
@@ -693,7 +734,11 @@ namespace XLua
             LuaAPI.lua_pushvalue(L, obj_field);
             LuaAPI.lua_pushvalue(L, obj_getter);
             translator.PushFixCSFunction(L, item_getter);
+#if UNITY_WSA && !UNITY_EDITOR
+            translator.PushAny(L, type.GetTypeInfo().BaseType);
+#else
             translator.PushAny(L, type.BaseType);
+#endif
             LuaAPI.xlua_pushasciistring(L, Utils.LuaIndexsFieldName);
             LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
             LuaAPI.lua_pushnil(L);
@@ -710,7 +755,11 @@ namespace XLua
             LuaAPI.xlua_pushasciistring(L, "__newindex");
             LuaAPI.lua_pushvalue(L, obj_setter);
             translator.PushFixCSFunction(L, item_setter);
+#if UNITY_WSA && !UNITY_EDITOR
+            translator.Push(L, type.GetTypeInfo().BaseType);
+#else
             translator.Push(L, type.BaseType);
+#endif
             LuaAPI.xlua_pushasciistring(L, Utils.LuaNewIndexsFieldName);
             LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
             LuaAPI.lua_pushnil(L);
@@ -728,8 +777,11 @@ namespace XLua
             LuaAPI.xlua_pushasciistring(L, "UnderlyingSystemType");
             translator.PushAny(L, type);
             LuaAPI.lua_rawset(L, cls_field);
-
+#if UNITY_WSA && !UNITY_EDITOR
+            if (type != null && type.GetTypeInfo().IsEnum)
+#else
             if (type != null && type.IsEnum)
+#endif
             {
                 LuaAPI.xlua_pushasciistring(L, "__CastFrom");
                 translator.PushFixCSFunction(L, genEnumCastFrom(type));
@@ -744,7 +796,11 @@ namespace XLua
             LuaAPI.xlua_pushasciistring(L, "__index");
             LuaAPI.lua_pushvalue(L, cls_getter);
             LuaAPI.lua_pushvalue(L, cls_field);
+#if UNITY_WSA && !UNITY_EDITOR
+            translator.Push(L, type.GetTypeInfo().BaseType);
+#else
             translator.Push(L, type.BaseType);
+#endif
             LuaAPI.xlua_pushasciistring(L, Utils.LuaClassIndexsFieldName);
             LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
             LuaAPI.gen_cls_indexer(L);
@@ -759,7 +815,11 @@ namespace XLua
 
             LuaAPI.xlua_pushasciistring(L, "__newindex");
             LuaAPI.lua_pushvalue(L, cls_setter);
+#if UNITY_WSA && !UNITY_EDITOR
+            translator.Push(L, type.GetTypeInfo().BaseType);
+#else
             translator.Push(L, type.BaseType);
+#endif
             LuaAPI.xlua_pushasciistring(L, Utils.LuaClassNewIndexsFieldName);
             LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
             LuaAPI.gen_cls_newindexer(L);
@@ -886,9 +946,11 @@ namespace XLua
             {
                 LuaAPI.lua_pushstdcallcfunction(L, csIndexer);
             }
-
+#if UNITY_WSA && !UNITY_EDITOR
+            translator.Push(L, type == null ? base_type : type.GetTypeInfo().BaseType);
+#else
             translator.Push(L, type == null ? base_type : type.BaseType);
-
+#endif
             LuaAPI.xlua_pushasciistring(L, Utils.LuaIndexsFieldName);
             LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
             if (arrayIndexer == null)
@@ -928,7 +990,11 @@ namespace XLua
                 LuaAPI.lua_pushstdcallcfunction(L, csNewIndexer);
             }
 
+#if UNITY_WSA && !UNITY_EDITOR
+            translator.Push(L, type == null ? base_type : type.GetTypeInfo().BaseType);
+#else
             translator.Push(L, type == null ? base_type : type.BaseType);
+#endif
 
             LuaAPI.xlua_pushasciistring(L, Utils.LuaNewIndexsFieldName);
             LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
@@ -1031,7 +1097,11 @@ namespace XLua
             LuaAPI.xlua_pushasciistring(L, "__index");
             LuaAPI.lua_pushvalue(L, cls_getter_idx);
             LuaAPI.lua_pushvalue(L, cls_idx);
+#if UNITY_WSA && !UNITY_EDITOR
+            translator.Push(L, type.GetTypeInfo().BaseType);
+#else
             translator.Push(L, type.BaseType);
+#endif
             LuaAPI.xlua_pushasciistring(L, Utils.LuaClassIndexsFieldName);
             LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
             LuaAPI.gen_cls_indexer(L);
@@ -1049,7 +1119,11 @@ namespace XLua
             //begin cls newindex
             LuaAPI.xlua_pushasciistring(L, "__newindex");
             LuaAPI.lua_pushvalue(L, cls_setter_idx);
+#if UNITY_WSA && !UNITY_EDITOR
+            translator.Push(L, type.GetTypeInfo().BaseType);
+#else
             translator.Push(L, type.BaseType);
+#endif
             LuaAPI.xlua_pushasciistring(L, Utils.LuaClassNewIndexsFieldName);
             LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
             LuaAPI.gen_cls_newindexer(L);

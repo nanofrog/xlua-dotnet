@@ -16,7 +16,11 @@ namespace UnityEngine
     {
         public static void Log(string msg)
         {
+#if UNITY_WSA && !UNITY_EDITOR
+            
+#else
             System.Console.WriteLine(msg);
+#endif
         }
 
         public static void LogWarning(string msg)

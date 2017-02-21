@@ -131,19 +131,30 @@ namespace XLua
                 }
                 return false;
             };
-
+#if UNITY_WSA && !UNITY_EDITOR
+            if (!type.GetTypeInfo().IsAbstract && typeof(Delegate).IsAssignableFrom(type))
+#else
             if (!type.IsAbstract && typeof(Delegate).IsAssignableFrom(type))
+#endif
             {
                 return (RealStatePtr L, int idx) =>
                 {
                     return LuaAPI.lua_isnil(L, idx) || LuaAPI.lua_isfunction(L, idx) || fixTypeCheck(L, idx);
                 };
             }
+#if UNITY_WSA && !UNITY_EDITOR
+            else if (type.GetTypeInfo().IsEnum)
+#else
             else if (type.IsEnum)
+#endif
             {
                 return fixTypeCheck;
             }
+#if UNITY_WSA && !UNITY_EDITOR
+            else if (type.GetTypeInfo().IsInterface)
+#else
             else if (type.IsInterface)
+#endif
             {
                 return (RealStatePtr L, int idx) =>
                 {
@@ -152,14 +163,22 @@ namespace XLua
             }
             else
             {
+#if UNITY_WSA && !UNITY_EDITOR
+                if ((type.GetTypeInfo().IsClass && type.GetConstructor(System.Type.EmptyTypes) != null)) //class has default construtor
+#else
                 if ((type.IsClass && type.GetConstructor(System.Type.EmptyTypes) != null)) //class has default construtor
+#endif
                 {
                     return (RealStatePtr L, int idx) =>
                     {
                         return LuaAPI.lua_isnil(L, idx) || LuaAPI.lua_istable(L, idx) || fixTypeCheck(L, idx);
                     };
                 }
+#if UNITY_WSA && !UNITY_EDITOR
+                else if (type.GetTypeInfo().IsValueType)
+#else
                 else if (type.IsValueType)
+#endif
                 {
                     return (RealStatePtr L, int idx) =>
                     {
@@ -433,7 +452,11 @@ namespace XLua
                     return translator.CreateDelegateBridge(L, type, idx);
                 };
             }
+#if UNITY_WSA && !UNITY_EDITOR
+            else if (type.GetTypeInfo().IsInterface)
+#else
             else if (type.IsInterface)
+#endif
             {
                 return (RealStatePtr L, int idx, object target) =>
                 {
@@ -447,7 +470,11 @@ namespace XLua
                     return translator.CreateInterfaceBridge(L, type, idx);
                 };
             }
+#if UNITY_WSA && !UNITY_EDITOR
+            else if (type.GetTypeInfo().IsEnum)
+#else
             else if (type.IsEnum)
+#endif
             {
                 return (RealStatePtr L, int idx, object target) =>
                 {
@@ -492,7 +519,11 @@ namespace XLua
                     {
                         LuaAPI.lua_pushnumber(L, i + 1);
                         LuaAPI.lua_rawget(L, idx);
+#if UNITY_WSA && !UNITY_EDITOR
+                        if (et.GetTypeInfo().IsPrimitive)
+#else
                         if (et.IsPrimitive)
+#endif
                         {
                             if (!StaticLuaCallbacks.TryPrimitiveArraySet(type, L, ary, i, n + 1))
                             {
@@ -512,7 +543,11 @@ namespace XLua
                     return ary;
                 };
             }
+#if UNITY_WSA && !UNITY_EDITOR
+            else if (typeof(IList).IsAssignableFrom(type) && type.GetTypeInfo().IsGenericType)
+#else
             else if (typeof(IList).IsAssignableFrom(type) && type.IsGenericType)
+#endif
             {
                 ObjectCast elementCaster = GetCaster(type.GetGenericArguments()[0]);
 
@@ -562,7 +597,11 @@ namespace XLua
                     return obj;
                 };
             }
+#if UNITY_WSA && !UNITY_EDITOR
+            else if (typeof(IDictionary).IsAssignableFrom(type) && type.GetTypeInfo().IsGenericType)
+#else
             else if (typeof(IDictionary).IsAssignableFrom(type) && type.IsGenericType)
+#endif
             {
                 ObjectCast keyCaster = GetCaster(type.GetGenericArguments()[0]);
                 ObjectCast valueCaster = GetCaster(type.GetGenericArguments()[1]);
@@ -602,7 +641,12 @@ namespace XLua
                     return dic;
                 };
             }
+#if UNITY_WSA && !UNITY_EDITOR
+            else if ((type.GetTypeInfo().IsClass && type.GetConstructor(System.Type.EmptyTypes) != null) || (type.GetTypeInfo().IsValueType && !type.GetTypeInfo().IsEnum)) //class has default construtor
+
+#else
             else if ((type.IsClass && type.GetConstructor(System.Type.EmptyTypes) != null) || (type.IsValueType && !type.IsEnum)) //class has default construtor
+#endif
             {
                 return (RealStatePtr L, int idx, object target) =>
                 {
@@ -649,7 +693,12 @@ namespace XLua
                             try
                             {
                                 field.SetValue(obj, GetCaster(field.FieldType)(L, n + 1,
+#if UNITY_WSA && !UNITY_EDITOR
+                                        target == null || field.FieldType.GetTypeInfo().IsPrimitive || field.FieldType == typeof(string) ? null : field.GetValue(obj)));
+
+#else
                                         target == null || field.FieldType.IsPrimitive || field.FieldType == typeof(string) ? null : field.GetValue(obj)));
+#endif
                             }
                             catch (Exception e)
                             {

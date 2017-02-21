@@ -7,10 +7,15 @@
 */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace XLua
 {
+#if WINDOWS_UWP
+    [DataContract]
+#else
     [Serializable]
+#endif
     public class LuaException : Exception
     {
         public LuaException(string message) : base(message)

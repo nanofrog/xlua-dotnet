@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using System.Reflection;
 
 namespace XLua
 {
@@ -51,8 +52,12 @@ namespace XLua
 
                 LuaTypes lua_type = LuaAPI.lua_type(L, -1);
                 Type type_of_value = typeof(TValue);
-                if (lua_type == LuaTypes.LUA_TNIL && type_of_value.IsValueType)
-                {
+#if UNITY_WSA && !UNITY_EDITOR
+            if (lua_type == LuaTypes.LUA_TNIL && type_of_value.GetTypeInfo().IsValueType)
+#else
+            if (lua_type == LuaTypes.LUA_TNIL && type_of_value.IsValueType)
+#endif
+            {
                     throw new InvalidCastException("can not assign nil to " + type_of_value);
                 }
 
@@ -114,8 +119,12 @@ namespace XLua
                     luaEnv.ThrowExceptionFromError(oldTop);
                 }
                 LuaTypes lua_type = LuaAPI.lua_type(L, -1);
-                if (lua_type == LuaTypes.LUA_TNIL && typeof(T).IsValueType)
-                {
+#if UNITY_WSA && !UNITY_EDITOR
+            if (lua_type == LuaTypes.LUA_TNIL && typeof(T).GetTypeInfo().IsValueType)
+#else
+            if (lua_type == LuaTypes.LUA_TNIL && typeof(T).IsValueType)
+#endif
+            {
                     throw new InvalidCastException("can not assign nil to " + typeof(T));
                 }
 

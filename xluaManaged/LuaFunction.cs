@@ -18,6 +18,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace XLua
 {
@@ -185,7 +186,11 @@ namespace XLua
 
         public T Cast<T>()
         {
+#if UNITY_WSA && !UNITY_EDITOR
+            if (!typeof(T).GetTypeInfo().IsSubclassOf(typeof(Delegate)))
+#else
             if (!typeof(T).IsSubclassOf(typeof(Delegate)))
+#endif
             {
                 throw new InvalidOperationException(typeof(T).Name + " is not a delegate type");
             }
