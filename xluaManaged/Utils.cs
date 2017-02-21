@@ -11,7 +11,9 @@ using System;
 using System.Reflection;
 using System.Linq;
 using System.Runtime.CompilerServices;
-
+#if UNITY_WSA && !UNITY_EDITOR
+using System.Threading.Tasks;
+#endif
 #if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
 using RealStatePtr = UniLua.ILuaState;
@@ -45,7 +47,52 @@ namespace XLua
             LuaAPI.lua_pop(L, 1);
             return ret;
         }
+#if UNITY_WSA && !UNITY_EDITOR
+        public static async Task<List<Assembly>> GetAssemblyList()
+        {
+            List<Assembly> assemblies = new List<Assembly>();
 
+            var files = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFilesAsync();
+            if (files == null)
+                return assemblies;
+
+            foreach (var file in files.Where(file => file.FileType == ".dll" || file.FileType == ".exe"))
+            {
+                try
+                {
+                    assemblies.Add(Assembly.Load(new AssemblyName(file.DisplayName)));
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
+
+            }
+            return assemblies;
+        }
+
+        /*
+to check if the assembly is dynamic:
+
+if (assembly.ManifestModule is System.Reflection.Emit.ModuleBuilder)
+This took me a while to figure out, so here it is asked and answered.
+
+Update:
+
+In .NET 4.0, there is now a property:
+
+if (assembly.IsDynamic)
+        */
+        public static IEnumerable<Type> GetAllTypes()
+        {
+            var assemblies = GetAssemblyList().Result;
+            return from assembly in assemblies
+                   where !(assembly.IsDynamic)
+                   from type in assembly.GetTypes()
+                   where !type.GetTypeInfo().IsGenericTypeDefinition
+                   select type;
+        }
+#else
         public static IEnumerable<Type> GetAllTypes()
         {
             return from assembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -54,6 +101,7 @@ namespace XLua
                                           where !type.IsGenericTypeDefinition
                                           select type;
         }
+#endif
 
         static LuaCSFunction genFieldGetter(Type type, FieldInfo field)
         {
