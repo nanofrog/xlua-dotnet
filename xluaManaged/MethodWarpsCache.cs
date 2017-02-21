@@ -347,7 +347,11 @@ namespace XLua
             if (!methodsOfType.ContainsKey(methodName))
             {
                 MemberInfo[] methods = type.GetMember(methodName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+#if UNITY_WSA && !UNITY_EDITOR
+                if (methods == null || methods.Length == 0 || ! (methods[0] is MethodBase) )
+#else
                 if (methods == null || methods.Length == 0 || methods[0].MemberType != MemberTypes.Method)
+#endif
                 {
                     return null;
                 }
