@@ -152,11 +152,17 @@ namespace XLua
             {
                 throw new Exception("top change, before:" + top + ", after:" + LuaAPI.lua_gettop(L));
             }
-
+#if UNITY_WSA && !UNITY_EDITOR
+            foreach (var nested_type in type.GetNestedTypes(BindingFlags.Public))
+            {
+                if ((!nested_type.GetTypeInfo().IsAbstract && typeof(Delegate).IsAssignableFrom(nested_type))
+                    || nested_type.GetTypeInfo().IsGenericTypeDefinition)
+#else
             foreach (var nested_type in type.GetNestedTypes())
             {
                 if ((!nested_type.IsAbstract && typeof(Delegate).IsAssignableFrom(nested_type))
                     || nested_type.IsGenericTypeDefinition)
+#endif
                 {
                     continue;
                 }
