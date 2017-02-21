@@ -186,14 +186,18 @@ namespace XLua
 
         public ObjectTranslator(LuaEnv luaenv,RealStatePtr L)
 		{
+#if UNITY_WSA && !UNITY_EDITOR
+		    assemblies = Utils.GetAssemblyList().Result;
+#else
             assemblies = new List<Assembly>();
 
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 assemblies.Add(assembly);
             }
+#endif
 
-			this.luaEnv=luaenv;
+            this.luaEnv=luaenv;
             objectCasters = new ObjectCasters(this);
             objectCheckers = new ObjectCheckers(this);
             methodWrapsCache = new MethodWrapsCache(this, objectCheckers, objectCasters);

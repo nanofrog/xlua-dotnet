@@ -510,7 +510,7 @@ namespace XLua
                     idx = idx > 0 ? idx : LuaAPI.lua_gettop(L) + idx + 1;// abs of index
                     Type et = type.GetElementType();
                     ObjectCast elementCaster = GetCaster(et);
-                    Array ary = target == null ? Array.CreateInstance(et, len) : target as Array;
+                    Array ary = target == null ? Array.CreateInstance(et, (int)len) : target as Array;
                     if (!LuaAPI.lua_checkstack(L, 1))
                     {
                         throw new Exception("stack overflow while cast to Array");
