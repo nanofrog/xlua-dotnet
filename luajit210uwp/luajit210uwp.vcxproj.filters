@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{182160ae-9e39-4a88-8b06-403bd9e19e79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="xlua">
+      <UniqueIdentifier>{bc72876e-ddba-4c83-a566-329cd8bc4017}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\luajit210\src\lib_aux.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_base.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_bit.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_debug.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_ffi.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_init.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_io.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_jit.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_math.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_os.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_package.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_string.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lib_table.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_alloc.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_api.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_asm.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_bc.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_bcread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_bcwrite.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_buf.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_carith.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_ccall.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_ccallback.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_cconv.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_cdata.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_char.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_clib.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_cparse.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_crecord.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_ctype.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_debug.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_dispatch.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_err.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_ffrecord.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_func.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_gc.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_gdbjit.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_ir.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_lex.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_lib.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_load.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_mcode.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_meta.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_obj.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_opt_dce.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_opt_fold.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_opt_loop.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_opt_mem.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_opt_narrow.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_opt_sink.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_opt_split.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_parse.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_profile.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_record.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_snap.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_state.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_str.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_strfmt.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_strfmt_num.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_strscan.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_tab.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_trace.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_udata.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_vmevent.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\src\lj_vmmath.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\xlua\i64lib.c">
+      <Filter>xlua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\xlua\perflib.c">
+      <Filter>xlua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luajit210\xlua\xlua.c">
+      <Filter>xlua</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\luajit210\src\lj_vm.obj" />
+  </ItemGroup>
+</Project>
