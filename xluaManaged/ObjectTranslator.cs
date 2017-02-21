@@ -935,7 +935,11 @@ namespace XLua
 
         public void Push(RealStatePtr L, LuaCSFunction o)
         {
+#if UNITY_WSA && !UNITY_EDITOR
+            if (o.GetMethodInfo().IsStatic || o.GetMethodInfo().GetCustomAttribute<MonoPInvokeCallbackAttribute>() != null)
+#else
             if (o.Method.IsStatic && Attribute.IsDefined(o.Method, typeof(MonoPInvokeCallbackAttribute)))
+#endif
             {
                 LuaAPI.lua_pushstdcallcfunction(L, o);
             }

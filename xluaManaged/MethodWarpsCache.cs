@@ -184,7 +184,11 @@ namespace XLua
                 if (target is Delegate)
                 {
                     Delegate delegateInvoke = (Delegate)target;
+#if UNITY_WSA && !UNITY_EDITOR
+                    toInvoke = delegateInvoke.GetMethodInfo();
+#else
                     toInvoke = delegateInvoke.Method;
+#endif
                 }
             }
 

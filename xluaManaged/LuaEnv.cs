@@ -504,7 +504,11 @@ namespace XLua
 
         public void AddBuildin(string name, LuaCSFunction initer)
         {
+#if UNITY_WSA && !UNITY_EDITOR
+            if (!initer.GetMethodInfo().IsStatic || initer.GetMethodInfo().GetCustomAttribute<MonoPInvokeCallbackAttribute>()==null)
+#else
             if (!initer.Method.IsStatic || !Attribute.IsDefined(initer.Method, typeof(MonoPInvokeCallbackAttribute)))
+#endif
             {
                 throw new Exception("initer must be static and has MonoPInvokeCallback Attribute!");
             }
