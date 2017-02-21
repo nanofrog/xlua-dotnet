@@ -649,8 +649,11 @@ namespace XLua
                     Stream stream = File.Open(filepath, FileMode.Open, FileAccess.Read);
                     StreamReader reader = new StreamReader(stream);
                     string text = reader.ReadToEnd();
+#if UNITY_WSA && !UNITY_EDITOR
+                    stream.Dispose();
+#else
                     stream.Close();
-
+#endif
                     UnityEngine.Debug.LogWarning("load lua file from StreamingAssets is obsolete, filename:" + filename);
                     if (LuaAPI.luaL_loadbuffer(L, text, "@" + filename) != 0)
                     {
@@ -664,7 +667,7 @@ namespace XLua
                         "\n\tno such file '{0}' in streamingAssetsPath!", filename));
                 }
 #endif
-                return 1;
+                    return 1;
             }
             catch (System.Exception e)
             {
