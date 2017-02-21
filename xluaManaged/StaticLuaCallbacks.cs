@@ -717,17 +717,25 @@ namespace XLua
 
                 try
                 {
+#if UNITY_WSA && !UNITY_EDITOR
+                    assembly = Assembly.Load(new AssemblyName(assemblyName));
+#else
                     assembly = Assembly.Load(assemblyName);
+#endif
                 }
                 catch (BadImageFormatException)
                 {
                     // The assemblyName was invalid.  It is most likely a path.
                 }
 
+#if UNITY_WSA && !UNITY_EDITOR
+#else
                 if (assembly == null)
                 {
                     assembly = Assembly.Load(AssemblyName.GetAssemblyName(assemblyName));
                 }
+#endif
+
 
                 if (assembly != null && !translator.assemblies.Contains(assembly))
                 {
