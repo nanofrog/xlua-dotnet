@@ -208,7 +208,11 @@ static const char *clib_extname(lua_State *L, const char *name)
 static void *clib_loadlib(lua_State *L, const char *name, int global)
 {
   DWORD oldwerr = GetLastError();
+#ifdef WINAPI_PARTITION_APP
+  void *h = (void *)LoadPackagedLibrary(clib_extname(L, name), 0);
+#else
   void *h = (void *)LoadLibraryExA(clib_extname(L, name), NULL, 0);
+#endif
   if (!h) clib_error(L, "cannot load module " LUA_QS ": %s", name);
   SetLastError(oldwerr);
   UNUSED(global);
@@ -240,6 +244,13 @@ static void *clib_getsym(CLibrary *cl, const char *name)
       HINSTANCE h = (HINSTANCE)clib_def_handle[i];
       if (!(void *)h) {  /* Resolve default library handles (once). */
 	switch (i) {
+#ifdef WINAPI_PARTITION_APP 
+    case CLIB_HANDLE_KERNEL32: h = LoadPackagedLibrary("kernel32.dll", 0); break;
+    case CLIB_HANDLE_USER32: h = LoadPackagedLibrary("user32.dll", 0); break;
+    case CLIB_HANDLE_GDI32: h = LoadPackagedLibrary("gdi32.dll", 0); break;
+    default: h = NULL;
+        break;
+#else
 	case CLIB_HANDLE_EXE: GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, NULL, &h); break;
 	case CLIB_HANDLE_DLL:
 	  GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -252,6 +263,7 @@ static void *clib_getsym(CLibrary *cl, const char *name)
 	case CLIB_HANDLE_KERNEL32: h = LoadLibraryExA("kernel32.dll", NULL, 0); break;
 	case CLIB_HANDLE_USER32: h = LoadLibraryExA("user32.dll", NULL, 0); break;
 	case CLIB_HANDLE_GDI32: h = LoadLibraryExA("gdi32.dll", NULL, 0); break;
+#endif
 	}
 	if (!h) continue;
 	clib_def_handle[i] = (void *)h;

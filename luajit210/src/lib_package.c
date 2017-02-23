@@ -119,7 +119,11 @@ static void ll_unloadlib(void *lib)
 
 static void *ll_load(lua_State *L, const char *path, int gl)
 {
+#ifdef WINAPI_PARTITION_APP 
+    HINSTANCE lib = LoadPackagedLibrary(path, 0);
+#else
   HINSTANCE lib = LoadLibraryExA(path, NULL, 0);
+#endif
   if (lib == NULL) pusherror(L);
   UNUSED(gl);
   return lib;
@@ -137,12 +141,16 @@ static const char *ll_bcsym(void *lib, const char *sym)
   if (lib) {
     return (const char *)GetProcAddress((HINSTANCE)lib, sym);
   } else {
+#if WINAPI_PARTITION_APP
+      return NULL;
+#else
     HINSTANCE h = GetModuleHandleA(NULL);
     const char *p = (const char *)GetProcAddress(h, sym);
     if (p == NULL && GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
 					(const char *)ll_bcsym, &h))
       p = (const char *)GetProcAddress(h, sym);
     return p;
+#endif
   }
 }
 
