@@ -51,7 +51,7 @@ namespace XLua
         public static async Task<List<Assembly>> GetAssemblyList()
         {
             List<Assembly> assemblies = new List<Assembly>();
-
+            return assemblies;
             var files = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFilesAsync();
             if (files == null)
                 return assemblies;
