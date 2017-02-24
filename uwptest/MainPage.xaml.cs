@@ -40,8 +40,9 @@ namespace uwptest
             var luaenv = new LuaEnv();
             A a = new A() { x = 1, y = 2 };
             luaenv.Global.Set("a", a);
-            a.x = 3;
-            luaenv.DoString("print(a:add())");
+            
+            luaenv.DoString("a.x = a:add()");
+            TB_Output.Text = a.x.ToString();
         }
     }
 }
