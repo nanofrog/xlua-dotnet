@@ -187,7 +187,7 @@ namespace XLua
         public ObjectTranslator(LuaEnv luaenv,RealStatePtr L)
 		{
 #if UNITY_WSA && !UNITY_EDITOR
-		    assemblies = Utils.GetAssemblyList().Result;
+		    assemblies = Utils.GetAssemblies();
 #else
             assemblies = new List<Assembly>();
 

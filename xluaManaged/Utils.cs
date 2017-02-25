@@ -48,10 +48,25 @@ namespace XLua
             return ret;
         }
 #if UNITY_WSA && !UNITY_EDITOR
+        public static List<Assembly> _assemblies;
+        public static List<Assembly> GetAssemblies()
+        {
+            if (_assemblies == null)
+            {
+                Task t = new Task(() =>
+                {
+                    _assemblies = GetAssemblyList().Result;
+                });
+                t.Start();
+                t.Wait();
+            }
+            return _assemblies;
+            
+        }
         public static async Task<List<Assembly>> GetAssemblyList()
         {
             List<Assembly> assemblies = new List<Assembly>();
-            return assemblies;
+            //return assemblies;
             var files = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFilesAsync();
             if (files == null)
                 return assemblies;
@@ -85,7 +100,7 @@ if (assembly.IsDynamic)
         */
         public static IEnumerable<Type> GetAllTypes()
         {
-            var assemblies = GetAssemblyList().Result;
+            var assemblies = GetAssemblies();
             return from assembly in assemblies
                    where !(assembly.IsDynamic)
                    from type in assembly.GetTypes()
